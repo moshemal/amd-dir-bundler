@@ -1,1 +1,1 @@
-"bla bla"
+"content of 3/a/1.js"

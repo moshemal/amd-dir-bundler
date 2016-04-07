@@ -1,1 +1,1 @@
-const assert = require('chai').assert;
+"content of 2/1.js"

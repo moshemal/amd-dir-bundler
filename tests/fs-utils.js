@@ -26,18 +26,20 @@ describe('##fs-utils.js:', () => {
     it('should return 3 members in the array' , (done) => {
       fsUtils.getPaths(testDataPath + "/3").then((res)=>{
         assert.equal(3, res.length);
-        assert( res.indexOf(testDataPath + "/3/1.js") >=0 );
+        assert( res.indexOf(testDataPath + "/3/1.js") >=0);
         assert(res.indexOf(testDataPath + "/3/2.js") >= 0);
         assert(res.indexOf(testDataPath + "/3/a/1.js") >= 0);
-        done();
-      });
+
+      }).then(done,done);
     });
   })
 
   describe('readModuleFile():', () => {
 
-    it('should return file content',() => {
-     // fsUtils.readModuleFile()
+    it('should return file content', function(done) {
+     fsUtils.readModuleFile(testDataPath + "/2/1.js").then( function(res){
+       assert.equal(res, '"content of 2/1.js"');
+     }).then(done,done);
     });
 
   });

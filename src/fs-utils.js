@@ -24,8 +24,8 @@ function getPaths(path) {
   });
 }
 
-function readModuleFile(path) {
-
+function readModuleFile(filename) {
+  return pfs.readFile(filename, 'utf8');
 }
 
 module.exports = {
