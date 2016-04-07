@@ -1,6 +1,6 @@
 {
-  "name": "subdir-bundle",
-  "version": "1.0.0",
+  "name": "requirejs-dir-bundler",
+  "version": "0.0.0",
   "description": "\"bundle an AMD module private files into a single javascript file\"",
   "main": "\"\"",
   "scripts": {
@@ -13,6 +13,10 @@
   ],
   "author": "Moshe Malka",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moshemal/requirejs-dir-bundler.git"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
