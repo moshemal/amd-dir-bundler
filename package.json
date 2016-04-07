@@ -1,0 +1,24 @@
+{
+  "name": "subdir-bundle",
+  "version": "1.0.0",
+  "description": "\"bundle an AMD module private files into a single javascript file\"",
+  "main": "\"\"",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha tests",
+    "watch": "./node_modules/mocha/bin/mocha tests -w"
+  },
+  "keywords": [
+    "\"requirejs",
+    "bundle\""
+  ],
+  "author": "Moshe Malka",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  },
+  "es6": true,
+  "dependencies": {
+    "es6-promisify": "^4.0.0"
+  }
+}
