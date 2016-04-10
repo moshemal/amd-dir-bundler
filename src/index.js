@@ -3,18 +3,21 @@
  */
 'use strict';
 
+const fsUtils = require('./fs-utils');
 const define = require('./define');
 
-function readModuleFile(path, callback) {
-  try {
-    var filename = require.resolve(path);
-    fs.readFile(filename, 'utf8', callback);
-  } catch (e) {
-    callback(e);
-  }
+
+
+// fsUtils.readModuleFile('../tests/tests-data/fs-utils/3/1.js').then( (words) => {
+//   console.log("hey");
+//   eval(words);
+// }, () => {console.log("err")});
+
+function pack() {
+
 }
 
-readModuleFile('./a.js', (err, words) => {
-  console.log(words);
-  eval(words);
-});
+module.exports = {
+  pack
+};
+

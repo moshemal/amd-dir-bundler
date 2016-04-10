@@ -5,15 +5,12 @@
 const assert = require('chai').assert;
 const define = require('../src/define');
 
-describe('define.js: ', function() {
+describe('##define.js: ', function() {
 
-  // it('should return empty array', function(done) {
-  //
-  //   dirMapper.getPaths(testDataPath + "/1").then((res)=>{
-  //     assert.deepEqual([], res);
-  //     done();
-  //   });
-  // });
+  it('should define bla bla', function() {
+
+
+  });
 
 
 });
