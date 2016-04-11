@@ -10,14 +10,22 @@ define([], function(){
         privates: [str]
       };
     })();
+
+    privateDeps["controller/1"] = (function(utils){
+      'use strict';
+      return {
+        name: "1/controller/1",
+        deps: [utils]
+      };
+    })(utils);
     return privateDeps;
   })();
 
-  return (function(utils){
+  return (function(ctrl){
     'use strict';
     return {
-      name: "1/main2",
-      deps: [utils]
+      name: "1/main3",
+      deps: [ctrl]
     };
-  })(privateDeps["utils/1"]);
+  })(privateDeps["controller/1"]);
 });

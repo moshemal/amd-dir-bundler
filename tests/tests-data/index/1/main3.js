@@ -6,5 +6,5 @@ define(['./controller/1'], function(ctrl){
   return {
     name: "1/main3",
     deps: [ctrl]
-  }
+  };
 });

@@ -10,15 +10,6 @@ const pfs = require('../src/promisified-fs');
 
 const testDataPath = __dirname + "/tests-data/index";
 
-function testPackCase(modulePath, resultPath) {
-  return Promise.all([
-    index.pack(testDataPath + modulePath),
-    pfs.readFile(testDataPath + resultPath, 'utf8')
-  ]).then( (values) => {
-    assert.equal(UglifyJS.minify(values[0], {fromString: true}).code,
-      UglifyJS.minify(values[1], {fromString: true}).code);
-  })
-}
 describe('##index.js:', () => {
 
   describe('pack():', () => {
@@ -33,3 +24,16 @@ describe('##index.js:', () => {
 
   });
 });
+
+/*
+  Helpers
+ */
+function testPackCase(modulePath, resultPath) {
+  return Promise.all([
+    index.pack(testDataPath + modulePath),
+    pfs.readFile(testDataPath + resultPath, 'utf8')
+  ]).then( (values) => {
+    assert.equal(UglifyJS.minify(values[0], {fromString: true}).code,
+      UglifyJS.minify(values[1], {fromString: true}).code);
+  })
+}
