@@ -5,11 +5,31 @@
 'use strict';
 const assert = require('chai').assert;
 const index = require('../src/index');
+const UglifyJS = require("uglify-js");
+const pfs = require('../src/promisified-fs');
 
+const testDataPath = __dirname + "/tests-data/index";
+
+function testPackCase(modulePath, resultPath) {
+  return Promise.all([
+    index.pack(testDataPath + modulePath),
+    pfs.readFile(testDataPath + resultPath, 'utf8')
+  ]).then( (values) => {
+    assert.equal(UglifyJS.minify(values[0], {fromString: true}).code,
+      UglifyJS.minify(values[1], {fromString: true}).code);
+  })
+}
 describe('##index.js:', () => {
+
   describe('pack():', () => {
-    it('should pack directory 1', () => {
-      
+    it('should return main1 content', (done) => {
+      testPackCase("/1/main1.js", "/1/results/main1.js")
+        .then(done,done);
     });
+    it('should pack main2 with utils inside it', (done) => {
+      testPackCase("/1/main2.js", "/1/results/main2.js")
+        .then(done,done);
+    });
+
   });
 });

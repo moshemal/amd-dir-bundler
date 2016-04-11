@@ -17,7 +17,7 @@ module.exports = function (name, deps, callback) {
     callback = deps;
     deps = null;
   }
-  console.log("define")
+  console.log("define");
   console.log(deps, callback.toSource());
 
 
