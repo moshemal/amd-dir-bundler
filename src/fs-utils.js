@@ -2,7 +2,7 @@
 
 const pfs = require('./promisified-fs');
 
-function getPaths(path) {
+function lsSubFiles(path) {
   //path = __dirname + path;
   return pfs.readdir(path).then( (fileNames) => {
     let promises = fileNames.map((fileName) => {
@@ -10,7 +10,7 @@ function getPaths(path) {
       return pfs.stat(currPath)
         .then( (stat) => {
           if (stat.isDirectory()){
-            return getPaths(currPath);
+            return lsSubFiles(currPath);
           } else {
             return [currPath];
           }
@@ -29,6 +29,6 @@ function readModuleFile(filename) {
 }
 
 module.exports = {
-  getPaths, readModuleFile
+  lsSubFiles, readModuleFile
 };
 
