@@ -2,8 +2,20 @@
  * Created by moshemal on 4/7/16.
  */
 
-module.exports = function (name, deps, callback) {
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 
+function getFunctionParams (str) {
+  'use strict';
+  str = str.replace(STRIP_COMMENTS, "");
+  let paramsDirtyArr = str.slice(str.indexOf("(") + 1, str.indexOf(")")).split(",");
+  paramsDirtyArr = paramsDirtyArr.filter((curr) => {
+    return (curr !== "");
+  });
+  return paramsDirtyArr.map((param)=>{return param.trim()});
+}
+
+module.exports = function (name, deps, callback) {
+  'use strict';
   //Allow for anonymous modules
   if (typeof name !== 'string') {
     //Adjust args appropriately
@@ -17,8 +29,12 @@ module.exports = function (name, deps, callback) {
     callback = deps;
     deps = null;
   }
-  console.log("define");
-  console.log(deps, callback.toSource());
 
+  let parameters = getFunctionParams(callback.toString());
 
+  return {
+    deps: deps || [],
+    callback: callback.toString(),
+    parameters: parameters
+  }
 };
