@@ -36,10 +36,16 @@ describe('##fs-utils.js:', () => {
 
   describe('readModuleFile():', () => {
 
-    it('should return file content', function(done) {
+    it('should return file with js extension content', function(done) {
      fsUtils.readModuleFile(testDataPath + "/2/1.js").then( function(res){
        assert.equal(res, '"content of 2/1.js"');
      }).then(done,done);
+    });
+
+    it('should return file with no js extension content', function(done) {
+      fsUtils.readModuleFile(testDataPath + "/2/1").then( function(res){
+        assert.equal(res, '"content of 2/1.js"');
+      }).then(done,done);
     });
 
   });
