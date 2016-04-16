@@ -33,7 +33,7 @@ module.exports = function (name, deps, callback) {
   let parameters = getFunctionParams(callback.toString());
 
   return {
-    deps: deps || [],
+    depNames: deps || [],
     callback: callback.toString(),
     parameters: parameters
   }
