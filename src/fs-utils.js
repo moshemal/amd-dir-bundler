@@ -27,6 +27,7 @@ function lsSubFiles(path) {
 function isPluginIncluded(moduleName){
   moduleName.indexOf("!")
 }
+
 function readModuleFile(filename) {
   if (!filename.endsWith(".js") && !isPluginIncluded(filename)){
     filename = filename + ".js"
@@ -35,6 +36,7 @@ function readModuleFile(filename) {
 }
 
 module.exports = {
-  lsSubFiles, readModuleFile
+  lsSubFiles,
+  readModuleFile
 };
 
