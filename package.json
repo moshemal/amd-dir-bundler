@@ -18,6 +18,7 @@
     "url": "https://github.com/moshemal/requirejs-dir-bundler.git"
   },
   "devDependencies": {
+    "asyncawait": "^1.0.3",
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
     "uglify-js": "^2.6.2"
