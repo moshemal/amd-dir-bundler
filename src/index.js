@@ -155,7 +155,6 @@ function printModule(moduleProps, globalDepsIndex) {
   return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args});`;
 }
 
-pack(__dirname + "/../tests/tests-data/index/1/main4").then((res)=>{console.log(res)});
 
 
 
