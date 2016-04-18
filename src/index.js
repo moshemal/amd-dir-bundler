@@ -106,10 +106,10 @@ function topologicalSort(privateModules) {
         return;
       }
       helper(privateModules[indexes[dep.moduleName]], privateModules, indexes);
-    })
+    });
     sorted.push(curr);
   }
-  return sorted.reverse();
+  return sorted;
 }
 
 function pack(basePath, filePath) {
@@ -118,6 +118,9 @@ function pack(basePath, filePath) {
     basePath = path.dirname(basePath);
   }
   basePath = path.resolve(basePath);
+  if (filePath.endsWith(".js")){
+    filePath = filePath.substring(0, filePath.indexOf(".js"))
+  }
 
   return getAllModulesProps(basePath, filePath).then((modules)=>{
     let globalIndexes = {};
@@ -128,12 +131,11 @@ function pack(basePath, filePath) {
 
     modules.privateModules = topologicalSort(modules.privateModules);
 
-    let res = `define([${globalModules.join(",")}], function(){
-      var __modules = {};
-      ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
-      return __modules["${path.relative(basePath, filePath)}"];
-    });`
-   return res;
+    return `define([${globalModules.join(",")}], function(){
+        var __modules = {};
+        ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
+        return __modules["${path.relative(basePath, filePath)}"];
+      });`
   });
 }
 
@@ -146,7 +148,7 @@ function printModule(moduleProps, globalDepsIndex) {
     if (typeof globalDepsIndex[curr.moduleName] === "number"){
       return `arguments[${globalDepsIndex[curr.moduleName]}]`
     } else {
-      return `privateDeps["${curr.moduleName}"]`;
+      return `__modules["${curr.moduleName}"]`;
     }
   }).join(", ");
   return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args});`;
