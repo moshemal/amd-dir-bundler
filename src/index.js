@@ -8,6 +8,7 @@ const define  = require('./define');
 const path    = require('path');
 const ASYNC   = require('asyncawait/async');
 const AWAIT   = require('asyncawait/await');
+const beautify = require('js-beautify').js_beautify;
 
 function handleOneModule(basePath, modulePath, isPrivate) {
   let currDir = path.dirname(modulePath);
@@ -131,11 +132,11 @@ function pack(basePath, filePath) {
 
     modules.privateModules = topologicalSort(modules.privateModules);
 
-    return `define([${globalModules.join(",")}], function(){
-        var __modules = {};
-        ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
-        return __modules["${path.relative(basePath, filePath)}"];
-      });`
+    return beautify(`define([${globalModules.join(",")}], function(){
+              var __modules = {};
+              ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
+              return __modules["${path.relative(basePath, filePath)}"];
+            });`, { "indent_size": 2, "indent_char": " "});
   });
 }
 
@@ -154,6 +155,7 @@ function printModule(moduleProps, globalDepsIndex) {
   return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args});`;
 }
 
+pack(__dirname + "/../tests/tests-data/index/1/main4").then((res)=>{console.log(res)});
 
 
 
