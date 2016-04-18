@@ -22,6 +22,7 @@ function handleOneModule(basePath, modulePath, isPrivate) {
       if (isPrivate(absolutePath)){
         dep.absolutePath = absolutePath;
         dep.moduleName = relativePath;
+        dep.isPrivate = true;
       } else {
         dep.moduleName = depName.startsWith(".") ? relativePath : depName
       }
@@ -85,6 +86,32 @@ const getAllModulesProps = ASYNC (function(basePath,modulePath){
   }
 });
 
+function topologicalSort(privateModules) {
+  let sorted = [];
+  let visited = {};
+  let indexes = {};
+  privateModules.forEach((curr, i)=>{
+    indexes[curr.moduleName] = i;
+  });
+  privateModules.forEach((curr, i, arr)=>{
+    if (visited[curr.moduleName]){
+      return;
+    }
+    helper(curr, arr, indexes)
+  });
+  function helper(curr, privateModules, indexes){
+    visited[curr.moduleName] = true;
+    curr.deps.forEach((dep) => {
+      if (!dep.isPrivate || visited[dep.moduleName]){
+        return;
+      }
+      helper(privateModules[indexes[dep.moduleName]], privateModules, indexes);
+    })
+    sorted.push(curr);
+  }
+  return sorted.reverse();
+}
+
 function pack(basePath, filePath) {
   if (!Boolean(filePath)){
     filePath = basePath;
@@ -99,10 +126,11 @@ function pack(basePath, filePath) {
       return curr.moduleName;
     });
 
+    modules.privateModules = topologicalSort(modules.privateModules);
 
     let res = `define([${globalModules.join(",")}], function(){
       var __modules = {};
-      ${modules.privateModules.map((currModule)=>{return printModule(currModule)}).join("\n")}
+      ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
       return __modules["${path.relative(basePath, filePath)}"];
     });`
    return res;
@@ -113,19 +141,17 @@ module.exports = {
   pack
 };
 
-function printModule(moduleProps, globalDepsIndex, isPrivate) {
+function printModule(moduleProps, globalDepsIndex) {
   let args = moduleProps.deps.map( (curr) => {
-    if (true){
-      return `privateDeps["${curr.moduleName}"]`;
+    if (typeof globalDepsIndex[curr.moduleName] === "number"){
+      return `arguments[${globalDepsIndex[curr.moduleName]}]`
     } else {
-
-      return `arguments[]`
+      return `privateDeps["${curr.moduleName}"]`;
     }
   }).join(", ");
-  return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args})`;
+  return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args});`;
 }
 
 
-pack(__dirname + "/../tests/tests-data/index/1/main4").then((res)=>{console.log(res)});
 
 
