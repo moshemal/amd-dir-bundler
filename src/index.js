@@ -98,15 +98,15 @@ function topologicalSort(privateModules) {
     if (visited[curr.moduleName]){
       return;
     }
-    helper(curr, arr, indexes)
+    handleDeps(curr, arr, indexes)
   });
-  function helper(curr, privateModules, indexes){
+  function handleDeps(curr, privateModules, indexes){
     visited[curr.moduleName] = true;
     curr.deps.forEach((dep) => {
       if (!dep.isPrivate || visited[dep.moduleName]){
         return;
       }
-      helper(privateModules[indexes[dep.moduleName]], privateModules, indexes);
+      handleDeps(privateModules[indexes[dep.moduleName]], privateModules, indexes);
     });
     sorted.push(curr);
   }
@@ -154,6 +154,7 @@ function printModule(moduleProps, globalDepsIndex) {
   }).join(", ");
   return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args});`;
 }
+
 
 
 
