@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('chai').assert;
 const fsUtils = require('../src/fs-utils');
-
+const fs = require('fs');
 const testDataPath = __dirname + "/tests-data/fs-utils";
 
 describe('##fs-utils.js:', () => {
@@ -9,9 +9,11 @@ describe('##fs-utils.js:', () => {
   describe('lsSubFiles():', () => {
 
     it('should return empty array', (done) => {
-      fsUtils.lsSubFiles(testDataPath + "/1").then((res)=>{
-        assert.deepEqual([], res);
-        done();
+      fs.mkdir(testDataPath + "/1", function(){
+        fsUtils.lsSubFiles(testDataPath + "/1").then((res)=>{
+          assert.deepEqual([], res);
+          done();
+        });
       });
     });
 
