@@ -25,6 +25,10 @@ describe('##index.js:', () => {
       testPackCase("/1/main3.js", "/1/results/main3.js")
         .then(done,done);
     });
+    it('should pack main5 with html text inside it', (done) => {
+      testPackCase("/1/main5.js", "/1/results/main5.js")
+        .then(done,done);
+    });
 
   });
 });

@@ -24,12 +24,9 @@ function lsSubFiles(path) {
   });
 }
 
-function isPluginIncluded(moduleName){
-  moduleName.indexOf("!")
-}
 
-function readModuleFile(filename) {
-  if (!filename.endsWith(".js") && !isPluginIncluded(filename)){
+function readModuleFile(filename, isPluginIncluded) {
+  if (!filename.endsWith(".js") && !isPluginIncluded){
     filename = filename + ".js"
   }
   return pfs.readFile(filename, 'utf8');

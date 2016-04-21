@@ -10,14 +10,51 @@ const ASYNC   = require('asyncawait/async');
 const AWAIT   = require('asyncawait/await');
 const beautify = require('js-beautify').js_beautify;
 
-function handleOneModule(basePath, modulePath, isPrivate) {
+const plugins = {
+  text(content){
+    return {
+      depNames: [],
+      callback: `function(){return '${content}';}\n`,
+      parameters: []
+    }
+  }
+};
+
+function splitPrefix(name) {
+  var prefix,
+    index = name ? name.indexOf('!') : -1;
+  if (index > -1) {
+    prefix = name.substring(0, index);
+    name = name.substring(index + 1, name.length);
+  }
+  return [prefix, name];
+}
+
+function createProps(moduleDep, fileContent) {
+  let props = {};
+  if (moduleDep.pluginName){
+    props = plugins[moduleDep.pluginName](fileContent);
+  } else {
+    props = eval(fileContent);
+  }
+  return props
+}
+
+
+function handleOneModule(basePath, moduleDep, isPrivate) {
+  let modulePath = moduleDep.absolutePath;
   let currDir = path.dirname(modulePath);
-  return fsUtils.readModuleFile(modulePath).then((code)=>{
-    var props = eval(code);
+  return fsUtils.readModuleFile(modulePath, moduleDep.pluginName).then((fileContent)=>{
+    var props = createProps(moduleDep, fileContent);
     props.modulePath = modulePath;
     props.moduleName = path.relative(basePath, modulePath);
     props.deps = props.depNames.map((depName) => {
+      let prefixNName = splitPrefix(depName);
+      depName = prefixNName[1];
       let dep = {};
+      if (prefixNName[0]){
+        dep.pluginName = prefixNName[0]
+      }
       let absolutePath = path.resolve(currDir, depName);
       let relativePath = path.relative(basePath, absolutePath);
       if (isPrivate(absolutePath)){
@@ -47,7 +84,7 @@ function isGlobalModuleExist(globalModules, resolvedName) {
   });
 }
 
-const getAllModulesProps = ASYNC (function(basePath,modulePath){
+const getAllModulesProps = ASYNC (function(basePath, modulePath){
   let subFiles = AWAIT (fsUtils.lsSubFiles(basePath));
 
   let privatesDict = subFiles.reduce((res, subFile)=>{
@@ -64,13 +101,15 @@ const getAllModulesProps = ASYNC (function(basePath,modulePath){
   let queue = [];
   let privateModules = [];
   let globalModules = [];
-  queue.push(modulePath);
+  queue.push({
+    absolutePath: modulePath
+  });
   while (queue.length > 0) {
     let moduleProps = AWAIT (handleOneModule(basePath, queue.shift(), isPrivate));
     moduleProps.deps.forEach((dep)=>{
       if (isPrivate(dep.absolutePath)){
         if (!isPrivateModuleExist(privateModules, queue, dep.absolutePath)){
-          queue.push(dep.absolutePath);
+          queue.push(dep);
         }
       } else {
         if (!isGlobalModuleExist(globalModules, dep.moduleName)){
@@ -132,7 +171,7 @@ function pack(basePath, filePath) {
 
     modules.privateModules = topologicalSort(modules.privateModules);
 
-    return beautify(`define([${globalModules.join(",")}], function(){
+    return beautify(`define([${globalModules.map((name)=>{return'"' + name + '"';}).join(",")}], function(){
               var __modules = {};
               ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
               return __modules["${path.relative(basePath, filePath)}"];
@@ -154,6 +193,7 @@ function printModule(moduleProps, globalDepsIndex) {
   }).join(", ");
   return `__modules["${moduleProps.moduleName}"] =  ( ${moduleProps.callback} )(${args});`;
 }
+
 
 
 
