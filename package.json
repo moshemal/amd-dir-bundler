@@ -1,16 +1,13 @@
 {
   "name": "amd-dir-bundler",
-  "version": "0.0.0",
-  "description": "\"bundle an AMD module private files into a single javascript file\"",
-  "main": "\"\"",
+  "version": "0.1.0",
+  "description": "bundle an AMD module with its private dependencies into a single javascript file",
+  "main": "src/index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha tests",
     "watch": "./node_modules/mocha/bin/mocha tests -w"
   },
-  "keywords": [
-    "\"requirejs",
-    "bundle\""
-  ],
+  "keywords": ["amd", "bundle", "requirejs", "private sub modules", "private dependencies", "AMD module"],
   "author": "Moshe Malka",
   "license": "ISC",
   "repository": {
