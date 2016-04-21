@@ -12,8 +12,11 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moshemal/requirejs-dir-bundler.git"
+    "url": "https://github.com/moshemal/amd-dir-bundler.git"
   },
+  "files": [
+    "src"
+  ],
   "devDependencies": {
     "asyncawait": "^1.0.3",
     "chai": "^3.5.0",
