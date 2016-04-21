@@ -1,5 +1,5 @@
 {
-  "name": "requirejs-dir-bundler",
+  "name": "amd-dir-bundler",
   "version": "0.0.0",
   "description": "\"bundle an AMD module private files into a single javascript file\"",
   "main": "\"\"",
