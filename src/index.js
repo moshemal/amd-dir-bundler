@@ -12,9 +12,15 @@ const beautify = require('js-beautify').js_beautify;
 
 const plugins = {
   text(content){
+    let res = content.replace(/'/gm, "\\'");
+    res = res.replace(/"/gm, '\\"').replace(/\r/gm, "");
+    res = res.split("\n").join("' + \n'");
     return {
       depNames: [],
-      callback: `function(){return '${content}';}\n`,
+      callback: `function () {
+        return '${res}';
+        }\n
+        `,
       parameters: []
     }
   }
