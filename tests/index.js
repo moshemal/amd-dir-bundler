@@ -33,6 +33,10 @@ describe('##index.js:', () => {
       testPackCase("/1/main5.js", "/1/results/main5.js")
         .then(done,done);
     });
+    it('should pack main6 with useSubOf option', (done) => {
+      testPackCase("/1/main5.js", "/1/results/main5.js", {useSubOf: ['sandbox']})
+        .then(done,done);
+    });
 
   });
 });
@@ -40,9 +44,9 @@ describe('##index.js:', () => {
 /*
   Helpers
  */
-function testPackCase(modulePath, resultPath) {
+function testPackCase(modulePath, resultPath, options) {
   return Promise.all([
-    index.pack(testDataPath + modulePath),
+    index.pack(testDataPath + modulePath, options),
     pfs.readFile(testDataPath + resultPath, 'utf8')
   ]).then( (values) => {
     assert.equal(UglifyJS.minify(values[0].code, {fromString: true, mangle: false, compress: false}).code,

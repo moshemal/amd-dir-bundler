@@ -158,11 +158,22 @@ function topologicalSort(privateModules) {
   return sorted;
 }
 
-function pack(basePath, filePath) {
+
+function pack(basePath, filePath, options) {
+  if (typeof basePath !== 'string') {
+    throw new Error("First argument type must be a string");
+  }
+  options = options || {};
   if (!Boolean(filePath)){
     filePath = basePath;
     basePath = path.dirname(basePath);
+  } else if (typeof filePath === 'object'){
+    options = filePath;
+    filePath = basePath;
+    basePath = path.dirname(basePath);
   }
+
+
   basePath = path.resolve(basePath);
   if (filePath.endsWith(".js")){
     filePath = filePath.substring(0, filePath.indexOf(".js"))
@@ -179,7 +190,7 @@ function pack(basePath, filePath) {
 
     let code = beautify(`define([${globalModules.map((name)=>{return'"' + name + '"';}).join(",")}], function(){
               var __modules = {};
-              ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
+              ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes, options)}).join("\n")}
               return __modules["${path.relative(basePath, filePath)}"];
             });`, { "indent_size": 2, "indent_char": " "});
 
@@ -191,10 +202,24 @@ module.exports = {
   pack
 };
 
-function printModule(moduleProps, globalDepsIndex) {
+function useSubOfHandler(moduleName, options) {
+  var res = "";
+  if (Array.isArray(options.useSubOf)){
+    options.useSubOf.some((rootName) => {
+      if (moduleName.startsWith(rootName)){
+        res = moduleName.split(path.sep).slice(1).join(".");
+        return true;
+      }
+      return false;
+    });
+  }
+  return res;
+}
+
+function printModule(moduleProps, globalDepsIndex, options) {
   let args = moduleProps.deps.map( (curr) => {
     if (typeof globalDepsIndex[curr.moduleName] === "number"){
-      return `arguments[${globalDepsIndex[curr.moduleName]}]`
+      return `arguments[${globalDepsIndex[curr.moduleName]}]` + useSubOfHandler(curr.moduleName, options);
     } else {
       return `__modules["${curr.moduleName}"]`;
     }
