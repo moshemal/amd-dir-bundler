@@ -19,7 +19,7 @@ const plugins = {
       depNames: [],
       callback: `function () {
         return '${res}';
-        }\n
+        }
         `,
       parameters: []
     }
