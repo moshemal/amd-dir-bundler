@@ -177,11 +177,13 @@ function pack(basePath, filePath) {
 
     modules.privateModules = topologicalSort(modules.privateModules);
 
-    return beautify(`define([${globalModules.map((name)=>{return'"' + name + '"';}).join(",")}], function(){
+    let code = beautify(`define([${globalModules.map((name)=>{return'"' + name + '"';}).join(",")}], function(){
               var __modules = {};
               ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes)}).join("\n")}
               return __modules["${path.relative(basePath, filePath)}"];
             });`, { "indent_size": 2, "indent_char": " "});
+
+    return {code}
   });
 }
 

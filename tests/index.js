@@ -45,7 +45,7 @@ function testPackCase(modulePath, resultPath) {
     index.pack(testDataPath + modulePath),
     pfs.readFile(testDataPath + resultPath, 'utf8')
   ]).then( (values) => {
-    assert.equal(UglifyJS.minify(values[0], {fromString: true, mangle: false, compress: false}).code,
+    assert.equal(UglifyJS.minify(values[0].code, {fromString: true, mangle: false, compress: false}).code,
       UglifyJS.minify(values[1], {fromString: true, mangle: false, compress: false}).code);
   })
 }
