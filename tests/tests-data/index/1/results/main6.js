@@ -12,12 +12,12 @@ define(["sandbox/bla", "sandbox/bla/nestedBla"], function(){
   __modules["html/1.html"] = (function(){
     return '<div>bla bla</div>';
   })();
-  __modules["main5"] = (function(utils, sandbox, html){
+  __modules["main6"] = (function(utils, bla, nestedBla, html){
     'use strict';
     return {
-      name: "1/main5",
+      name: "1/main6",
       deps: [utils, sandbox, html]
     };
-  })(__modules["utils/1"], arguments[0].bla, arguments[0].bla.nestedBla, __modules["html/1.html"]);
-  return __modules["main5"];
+  })(__modules["utils/1"], arguments[0].bla, arguments[1].bla.nestedBla, __modules["html/1.html"]);
+  return __modules["main6"];
 });

@@ -207,7 +207,7 @@ function useSubOfHandler(moduleName, options) {
   if (Array.isArray(options.useSubOf)){
     options.useSubOf.some((rootName) => {
       if (moduleName.startsWith(rootName)){
-        res = moduleName.split(path.sep).slice(1).join(".");
+        res = "." + moduleName.split(path.sep).slice(1).join(".");
         return true;
       }
       return false;

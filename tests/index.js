@@ -34,7 +34,7 @@ describe('##index.js:', () => {
         .then(done,done);
     });
     it('should pack main6 with useSubOf option', (done) => {
-      testPackCase("/1/main5.js", "/1/results/main5.js", {useSubOf: ['sandbox']})
+      testPackCase("/1/main6.js", "/1/results/main6.js", {useSubOf: ['sandbox']})
         .then(done,done);
     });
 
