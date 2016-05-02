@@ -188,7 +188,21 @@ function pack(basePath, filePath, options) {
 
     modules.privateModules = topologicalSort(modules.privateModules);
 
-    let code = beautify(`define([${globalModules.map((name)=>{return'"' + name + '"';}).join(",")}], function(){
+
+    const printDependency = (name) => {
+      if (Array.isArray(options.useSubOf)){
+        options.useSubOf.some((rootName) => {
+          if (name.startsWith(rootName)) {
+            name = rootName;
+            return true
+          }
+          return false;
+        });
+      }
+
+      return'"' + name + '"';
+    };
+    let code = beautify(`define([${globalModules.map(printDependency).join(",")}], function(){
               var __modules = {};
               ${modules.privateModules.map((currModule)=>{return printModule(currModule, globalIndexes, options)}).join("\n")}
               return __modules["${path.relative(basePath, filePath)}"];
@@ -202,7 +216,8 @@ module.exports = {
   pack
 };
 
-function useSubOfHandler(moduleName, options) {
+
+function separatorToDot(moduleName, options) {
   var res = "";
   if (Array.isArray(options.useSubOf)){
     options.useSubOf.some((rootName) => {
@@ -221,7 +236,7 @@ function useSubOfHandler(moduleName, options) {
 function printModule(moduleProps, globalDepsIndex, options) {
   let args = moduleProps.deps.map( (curr) => {
     if (typeof globalDepsIndex[curr.moduleName] === "number"){
-      return `arguments[${globalDepsIndex[curr.moduleName]}]` + useSubOfHandler(curr.moduleName, options);
+      return `arguments[${globalDepsIndex[curr.moduleName]}]` + separatorToDot(curr.moduleName, options);
     } else {
       return `__modules["${curr.moduleName}"]`;
     }
