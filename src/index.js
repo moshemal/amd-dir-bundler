@@ -48,12 +48,12 @@ function createProps(moduleDep, fileContent) {
 
 
 function handleOneModule(basePath, moduleDep, isPrivate) {
-  let modulePath = moduleDep.absolutePath;
-  let currDir = path.dirname(modulePath);
-  return fsUtils.readModuleFile(modulePath, moduleDep.pluginName).then((fileContent)=>{
+  let moduleAbsolutePath = moduleDep.absolutePath;
+  let currDir = path.dirname(moduleAbsolutePath);
+  return fsUtils.readModuleFile(moduleAbsolutePath, moduleDep.pluginName).then((fileContent)=>{
     var props = createProps(moduleDep, fileContent);
-    props.modulePath = modulePath;
-    props.moduleName = path.relative(basePath, modulePath);
+    props.absolutePath = moduleAbsolutePath;
+    props.moduleName = path.relative(basePath, moduleAbsolutePath);
     props.deps = props.depNames.map((depName) => {
       let prefixNName = splitPrefix(depName);
       depName = prefixNName[1];
@@ -80,6 +80,9 @@ function isPrivateModuleExist(privateModules, queue, absolutePath) {
   return privateModules.some((currModuleProps) => {
       return currModuleProps.absolutePath === absolutePath;
     }) || queue.some((currModulePath) => {
+      if (currModulePath === absolutePath){
+        console.log("circular: ", absolutePath);
+      }
       return currModulePath === absolutePath;
     });
 }
@@ -90,7 +93,7 @@ function isGlobalModuleExist(globalModules, resolvedName) {
   });
 }
 
-const getAllModulesProps = ASYNC (function(basePath, modulePath){
+const getAllModulesProps = ASYNC (function(basePath, absolutePath){
   let subFiles = AWAIT (fsUtils.lsSubFiles(basePath));
 
   let privatesDict = subFiles.reduce((res, subFile)=>{
@@ -107,9 +110,8 @@ const getAllModulesProps = ASYNC (function(basePath, modulePath){
   let queue = [];
   let privateModules = [];
   let globalModules = [];
-  queue.push({
-    absolutePath: modulePath
-  });
+
+  queue.push({absolutePath});
   while (queue.length > 0) {
     let moduleProps = AWAIT (handleOneModule(basePath, queue.shift(), isPrivate));
     moduleProps.deps.forEach((dep)=>{
@@ -123,7 +125,7 @@ const getAllModulesProps = ASYNC (function(basePath, modulePath){
         }
       }
     });
-    if(isPrivate(moduleProps.modulePath)){
+    if(isPrivate(moduleProps.absolutePath)){
       privateModules.push(moduleProps)
     }
   }
@@ -178,6 +180,7 @@ function pack(basePath, filePath, options) {
   if (filePath.endsWith(".js")){
     filePath = filePath.substring(0, filePath.indexOf(".js"))
   }
+  filePath = path.resolve(filePath);
 
   return getAllModulesProps(basePath, filePath).then((modules)=>{
     let globalIndexes = {};

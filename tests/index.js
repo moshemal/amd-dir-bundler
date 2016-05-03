@@ -37,7 +37,10 @@ describe('##index.js:', () => {
       testPackCase("/1/main6.js", "/1/results/main6.js", {useSubOf: ['sandbox']})
         .then(done,done);
     });
-
+    it('should finish although a circular dependency', (done) => {
+      index.pack(testDataPath + "/2/M3/M3.js").then((res)=>{
+      }).then(done,done);
+    })
   });
 });
 
