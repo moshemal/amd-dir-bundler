@@ -80,9 +80,6 @@ function isPrivateModuleExist(privateModules, queue, absolutePath) {
   return privateModules.some((currModuleProps) => {
       return currModuleProps.absolutePath === absolutePath;
     }) || queue.some((currModulePath) => {
-      if (currModulePath === absolutePath){
-        console.log("circular: ", absolutePath);
-      }
       return currModulePath === absolutePath;
     });
 }
